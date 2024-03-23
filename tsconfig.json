@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "strict": true,
+    "target": "ES2022",
+    "module": "NodeNext",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "moduleResolution": "NodeNext",
+  },
+  "exclude": ["templates/*", "temporary/*"]
+}
