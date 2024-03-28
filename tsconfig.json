@@ -3,11 +3,12 @@
     "rootDir": "src",
     "outDir": "dist",
     "strict": true,
-    "target": "ES2022",
+    "target": "ES2015",
     "module": "NodeNext",
-    "sourceMap": true,
+    "sourceMap": false,
     "esModuleInterop": true,
     "moduleResolution": "NodeNext",
   },
+  "include": ["environment.d.ts", "src/**/*"],
   "exclude": ["templates/*", "temporary/*"]
 }
