@@ -8,7 +8,6 @@ import { Config } from '../../config.js';
 import dotenv, { DotenvParseOutput } from 'dotenv';
 import { validate } from 'uuid';
 import { nanoid } from 'nanoid';
-import path from 'path';
 
 // ~/projekt/byteboost/byteboost-application/client
 
@@ -42,10 +41,6 @@ class UploadSoucemapsHandler {
       const directory = readdirSync(this.path);
 
       if (!directory.includes('package.json')) {
-        console.log(
-          `The directory ${this.path} is not a valid project directory`,
-        );
-
         return false;
       }
     } catch (err) {
@@ -147,7 +142,6 @@ class UploadSoucemapsHandler {
           continue;
         }
       } catch (err) {
-        console.log(err);
         console.log(`Couldn't find the source code file for ${mapFilename}`);
 
         continue;
@@ -190,30 +184,41 @@ class UploadSoucemapsHandler {
   }
 
   public loadEnvironmentVariables() {
-    const content = readFileSync(`${this.path}/.env`, 'utf-8');
+    try {
+      const content = readFileSync(`${this.path}/.env`, 'utf-8');
 
-    const buf = Buffer.from(content);
-    const config = dotenv.parse<EnvConf>(buf);
+      const buf = Buffer.from(content);
+      const config = dotenv.parse<EnvConf>(buf);
 
-    if (!config.BYTEBOOST_TOKEN) {
-      return 'BYTEBOOST_TOKEN is required';
+      if (!config.BYTEBOOST_TOKEN) {
+        return 'BYTEBOOST_TOKEN is required';
+      }
+
+      if (!config.BYTEBOOST_DOMAIN) {
+        return 'BYTEBOOST_DOMAIN is required';
+      }
+
+      if (!config.BYTEBOOST_ORGANIZATION) {
+        return 'BYTEBOOST_ORGANIZATION is required';
+      }
+
+      if (!validate(config.BYTEBOOST_TOKEN)) {
+        return 'Invalid auth token';
+      }
+
+      this.env = config;
+
+      return true;
+    } catch (err) {
+      console.log(`Couldn't find the .env file in path ${this.path}`);
+      console.log(`
+      Env format:
+      BYTEBOOST_TOKEN=<your-token>
+      BYTEBOOST_DOMAIN=<your-domain>
+      BYTEBOOST_ORGANIZATION=<your-organization>
+    `);
+      return false;
     }
-
-    if (!config.BYTEBOOST_DOMAIN) {
-      return 'BYTEBOOST_DOMAIN is required';
-    }
-
-    if (!config.BYTEBOOST_ORGANIZATION) {
-      return 'BYTEBOOST_ORGANIZATION is required';
-    }
-
-    if (!validate(config.BYTEBOOST_TOKEN)) {
-      return 'Invalid auth token';
-    }
-
-    this.env = config;
-
-    return true;
   }
 }
 
@@ -242,6 +247,15 @@ export const UploadSourcemapsCommand = new Command()
     const startTime = Date.now();
     const handler = new UploadSoucemapsHandler(path);
 
+    const isValidJsDir = handler.isPathValidJsDirectory();
+
+    if (!isValidJsDir) {
+      console.warn(
+        `The path ${path} is not a valid JS project directory. Couldn't find package.json`,
+      );
+      return;
+    }
+
     if (options.taggedVersion) {
       handler.version = options.taggedVersion;
     } else if (options.autoVersion) {
@@ -251,8 +265,6 @@ export const UploadSourcemapsCommand = new Command()
     const success = handler.loadEnvironmentVariables();
 
     if (success !== true) {
-      console.log(success);
-
       return;
     }
 
