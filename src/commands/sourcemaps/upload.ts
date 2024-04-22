@@ -27,7 +27,7 @@ interface EnvConf extends DotenvParseOutput {
   BYTEBOOST_ORGANIZATION: string;
 }
 
-export class UploadSoucemapsHandler {
+export class UploadSourceMapsHandler {
   public mapFilePaths: string[] = [];
 
   env: Partial<EnvConf> = {};
@@ -245,7 +245,7 @@ export const UploadSourcemapsCommand = new Command()
     }
 
     const startTime = Date.now();
-    const handler = new UploadSoucemapsHandler(path);
+    const handler = new UploadSourceMapsHandler(path);
 
     const isValidJsDir = handler.isPathValidJsDirectory();
 
