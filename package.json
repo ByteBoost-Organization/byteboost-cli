@@ -12,7 +12,7 @@
     "url": "https://github.com/ByteBoost-Organization/byteboost-cli",
     "type": "github"
   },
-  "homepage": "https://docs.byteboost.com/cli",
+  "homepage": "https://docs.byteboost.io/cli",
   "bin": {
     "byteboost-cli": "./dist/index.js"
   },
