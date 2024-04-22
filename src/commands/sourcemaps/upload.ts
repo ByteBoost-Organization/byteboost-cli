@@ -27,7 +27,7 @@ interface EnvConf extends DotenvParseOutput {
   BYTEBOOST_ORGANIZATION: string;
 }
 
-class UploadSoucemapsHandler {
+export class UploadSoucemapsHandler {
   public mapFilePaths: string[] = [];
 
   env: Partial<EnvConf> = {};
