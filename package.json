@@ -1,6 +1,6 @@
 {
   "name": "@byteboost/cli",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Byteboost CLI",
   "main": "dist/index.js",
   "repository": {
@@ -19,7 +19,8 @@
     "copy-prod-conf": "cp ./prod.config.js ./dist/config.js",
     "patch": "npm run clean && npm run build && npm run copy-prod-conf && npm version patch && npm publish && git push",
     "minor": "npm run clean && npm run build && npm run copy-prod-conf && npm version minor && npm publish && git push",
-    "major": "npm run clean && npm run build && npm run copy-prod-conf && npm version major && npm publish && git push"
+    "major": "npm run clean && npm run build && npm run copy-prod-conf && npm version major && npm publish && git push",
+    "prerelease": "npm run build && npm version prerelease --preid=alpha && npm publish && git push"
   },
   "author": "",
   "license": "ISC",
