@@ -1,13 +1,13 @@
 import { Command } from '@commander-js/extra-typings';
-import { lstatSync, readdirSync, readFileSync } from 'fs';
-import mime from 'mime';
-import FormData from 'form-data';
-import fetch from 'node-fetch';
-import cliProgress from 'cli-progress';
-import { Config } from '../../config.js';
 import dotenv, { DotenvParseOutput } from 'dotenv';
-import { validate } from 'uuid';
+import FormData from 'form-data';
+import { appendFileSync, lstatSync, readdirSync, readFileSync } from 'fs';
+import mime from 'mime';
 import { nanoid } from 'nanoid';
+import fetch from 'node-fetch';
+import { join } from 'path';
+import { validate } from 'uuid';
+import { Config } from '../../config.js';
 
 // ~/projekt/byteboost/byteboost-application/client
 
@@ -29,12 +29,18 @@ interface EnvConf extends DotenvParseOutput {
 
 export class UploadSourceMapsHandler {
   public mapFilePaths: string[] = [];
+  public fullpath: string;
 
   env: Partial<EnvConf> = {};
 
   public version: string | null = null;
 
-  constructor(public path: string) {}
+  constructor(
+    public path: string,
+    public distName?: string,
+  ) {
+    this.fullpath = join(path, distName ?? '');
+  }
 
   public isPathValidJsDirectory() {
     try {
@@ -52,7 +58,7 @@ export class UploadSourceMapsHandler {
     return true;
   }
 
-  public compileSourceMapPathsList(path: string = this.path) {
+  public compileSourceMapPathsList(path: string = this.fullpath) {
     try {
       const items = readdirSync(path);
 
@@ -61,24 +67,47 @@ export class UploadSourceMapsHandler {
           continue;
         }
 
-        const mimetype = mime.getType(`${path}/${item}`);
+        const mimetype = mime.getType(join(path, item));
 
         if (mimetype === FileType.ApplicationJson && item.includes('.map')) {
-          this.mapFilePaths.push(`${path}/${item}`);
+          this.mapFilePaths.push(join(path, item));
 
           continue;
         }
 
-        const stats = lstatSync(`${path}/${item}`);
+        const stats = lstatSync(join(path, item));
 
         if (stats.isDirectory()) {
-          this.compileSourceMapPathsList(`${path}/${item}`);
+          this.compileSourceMapPathsList(join(path, item));
 
           continue;
         }
       }
     } catch (err: any) {
       console.log(err.message);
+    }
+  }
+
+  public tagFilesWithDebugInfo() {
+    for (const path of this.mapFilePaths) {
+      const sourceCodePath = path.replace('.map', '');
+
+      const fileGroup = [sourceCodePath, path];
+
+      const debugId = nanoid();
+      for (const filePath of fileGroup) {
+        const content = readFileSync(filePath, 'utf-8');
+
+        if (content.includes(`//# bbDebugId`) && !Config.BB_DEBUG) {
+          throw new Error(
+            `File ${filePath} already contains a debug id. We only support one debug id per file. Please regenerate the sourcemaps.`,
+          );
+        }
+
+        appendFileSync(filePath, `\n//# bbDebugId=${debugId}`);
+
+        break;
+      }
     }
   }
 
@@ -120,65 +149,13 @@ export class UploadSourceMapsHandler {
       return;
     }
 
-    const bar = new cliProgress.Bar(
-      {
-        hideCursor: true,
-      },
-      cliProgress.Presets.shades_classic,
-    );
+    const res = await this.uploadFiles(this.mapFilePaths);
 
-    bar.start(this.mapFilePaths.length, 0);
-
-    let failedUploads = 0;
-
-    for (const path of this.mapFilePaths) {
-      const splitPath = path.split('/');
-      const mapFilename = splitPath.pop();
-      const fileBasePath = splitPath.join('/');
-      const sourcecodeFilename = mapFilename!.replace('.map', '');
-
-      try {
-        if (!lstatSync(`${fileBasePath}/${sourcecodeFilename}`).isFile()) {
-          continue;
-        }
-      } catch (err) {
-        console.log(`Couldn't find the source code file for ${mapFilename}`);
-
-        continue;
-      }
-
-      const result = await this.uploadFiles([
-        `${fileBasePath}/${sourcecodeFilename}`,
-        `${fileBasePath}/${mapFilename}`,
-      ]);
-
-      if (result.status !== 201) {
-        failedUploads++;
-
-        if (result.status === 401) {
-          bar.stop();
-          console.log('Unauthorized');
-          return;
-        } else if (result.status === 400) {
-          bar.stop();
-          const data = await result.json();
-
-          // @ts-expect-error
-          throw new Error(data.errors[0].message);
-        }
-
-        console.log(await result.json());
-        break;
-      }
-
-      bar.increment();
-
-      // break;
+    if (res.status !== 201) {
+      console.log('Failed to upload sourcemaps');
+      console.log(JSON.stringify(await res.json(), null, 2));
+      return;
     }
-
-    bar.stop();
-
-    console.log(`${failedUploads} sourcemaps failed to upload`);
 
     return;
   }
@@ -226,26 +203,23 @@ export const UploadSourcemapsCommand = new Command()
   .name('upload')
   .description('Upload sourcemaps to Byteboost')
   .option(
-    '--auto-version',
-    "Flag to disable versioning. We'll generate a random string as the version",
+    '--version <version>',
+    "Label the source maps with the project's version",
   )
-  .option(
-    '--tagged-version <version>',
-    "Label the source maps with the project's version number",
-  )
+  .option('--packageJSONVersion', 'Use the version from package.json')
   .option('--dist <dist>', 'Name of the distribution folder')
   .argument('<path>', 'Path to your project directory')
   .action(async (path: string, options) => {
-    if (!options.autoVersion && !options.taggedVersion) {
+    if (!options.version && !options.packageJSONVersion) {
       console.log(
-        `If you don't want to specify a version you have to pass the --auto-version flag and we will generate a random string as the version`,
+        `You must provide a version with --version or use --packageJSONVersion to use the version from package.json`,
       );
 
       return;
     }
 
     const startTime = Date.now();
-    const handler = new UploadSourceMapsHandler(path);
+    const handler = new UploadSourceMapsHandler(path, options.dist);
 
     const isValidJsDir = handler.isPathValidJsDirectory();
 
@@ -256,21 +230,33 @@ export const UploadSourcemapsCommand = new Command()
       return;
     }
 
-    if (options.taggedVersion) {
-      handler.version = options.taggedVersion;
-    } else if (options.autoVersion) {
-      handler.version = nanoid();
+    if (options.version) {
+      handler.version = options.version;
+    } else {
+      const packageJSON = JSON.parse(
+        readFileSync(`${path}/package.json`, 'utf-8'),
+      );
+
+      handler.version = packageJSON.version;
     }
 
     const success = handler.loadEnvironmentVariables();
 
     if (success !== true) {
+      console.log(success);
       return;
     }
 
     handler.compileSourceMapPathsList();
 
-    await handler.uploadSourcemaps();
+    if (!handler.mapFilePaths[0]) {
+      console.log(`No sourcemaps found in ${handler.fullpath}`);
+      return;
+    }
+
+    handler.tagFilesWithDebugInfo();
+
+    handler.uploadSourcemaps();
 
     console.log(
       `Uploaded sourcemaps in ${(Date.now() - startTime) / 1000} seconds`,

@@ -27,7 +27,8 @@
 		"noEmitOnError": true,
 		"useDefineForClassFields": true,
 		"forceConsistentCasingInFileNames": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"sourceMap": true
   },
   "include": ["environment.d.ts", "src/**/*"],
   "exclude": ["templates/*", "temporary/*"]
