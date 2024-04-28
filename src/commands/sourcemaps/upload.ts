@@ -23,6 +23,10 @@ export const UploadSourcemapsCommand = new Command()
   .option('--cleanupSourceMaps <boolean>', 'Remove sourcemaps after uploading')
   .argument('<path>', 'Path to your project directory')
   .action(async (path: string, options) => {
+    if (options.cleanupSourceMaps === undefined) {
+      options.cleanupSourceMaps = 'true';
+    }
+
     if (!options.version && !options.packageJSONVersion) {
       console.log(
         `You must provide a version with --version or use --packageJSONVersion to use the version from package.json`,
@@ -71,7 +75,9 @@ export const UploadSourcemapsCommand = new Command()
 
     await handler.uploadSourcemaps();
 
-    if (options.cleanupSourceMaps) {
+    console.log('options.cleanupSourceMaps', options.cleanupSourceMaps);
+
+    if (options.cleanupSourceMaps === 'true') {
       handler.cleanupSourceMaps();
     }
 
