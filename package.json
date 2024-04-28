@@ -1,6 +1,6 @@
 {
   "name": "@byteboost/cli",
-  "version": "0.0.1-prerelease.8",
+  "version": "0.0.1-prerelease.9",
   "description": "Byteboost CLI",
   "type": "module",
   "exports": {
