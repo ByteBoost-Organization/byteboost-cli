@@ -3,7 +3,7 @@
   "version": "0.0.1-prerelease.7",
   "description": "Byteboost CLI",
   "type": "module",
-  "exports": "./dist/index.js",
+  "exports": "./dist/managers/index.js",
   "private": false,
   "engines": {
     "node": ">=16"
