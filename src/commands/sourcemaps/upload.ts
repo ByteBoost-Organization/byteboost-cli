@@ -1,11 +1,19 @@
 import { Command } from '@commander-js/extra-typings';
 import dotenv, { DotenvParseOutput } from 'dotenv';
 import FormData from 'form-data';
-import { appendFileSync, lstatSync, readdirSync, readFileSync } from 'fs';
+import {
+  appendFileSync,
+  createReadStream,
+  lstatSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'fs';
 import mime from 'mime';
 import { nanoid } from 'nanoid';
 import fetch from 'node-fetch';
 import { join } from 'path';
+import readline from 'readline';
 import { validate } from 'uuid';
 import { Config } from '../../config.js';
 
@@ -88,7 +96,35 @@ export class UploadSourceMapsHandler {
     }
   }
 
-  public tagFilesWithDebugInfo() {
+  private readLastLine(filePath: string): Promise<string> {
+    return new Promise((resolve) => {
+      const rl = readline.createInterface({
+        input: createReadStream(filePath),
+        crlfDelay: Infinity,
+      });
+
+      let lastLine = '';
+
+      rl.on('line', (line) => {
+        lastLine = line;
+      });
+
+      rl.on('close', () => {
+        resolve(lastLine);
+      });
+    });
+  }
+
+  private parseJSON(content: string) {
+    try {
+      return JSON.parse(content);
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  }
+
+  public async tagFilesWithDebugInfo() {
     for (const path of this.mapFilePaths) {
       const sourceCodePath = path.replace('.map', '');
 
@@ -96,17 +132,28 @@ export class UploadSourceMapsHandler {
 
       const debugId = nanoid();
       for (const filePath of fileGroup) {
-        const content = readFileSync(filePath, 'utf-8');
-
-        if (content.includes(`//# bbDebugId`) && !Config.BB_DEBUG) {
+        if (
+          (await this.readLastLine(filePath)).includes('//# bbDebugId') &&
+          !Config.BB_DEBUG
+        ) {
           throw new Error(
             `File ${filePath} already contains a debug id. We only support one debug id per file. Please regenerate the sourcemaps.`,
           );
         }
 
-        appendFileSync(filePath, `\n//# bbDebugId=${debugId}`);
+        if (filePath.includes('.map')) {
+          const sourceMapContent = this.parseJSON(
+            readFileSync(filePath, 'utf-8'),
+          );
 
-        break;
+          if (sourceMapContent) {
+            sourceMapContent.debugId = debugId;
+
+            writeFileSync(filePath, JSON.stringify(sourceMapContent));
+          }
+        } else {
+          appendFileSync(filePath, `\n//# bbDebugId=${debugId}`);
+        }
       }
     }
   }
@@ -254,7 +301,7 @@ export const UploadSourcemapsCommand = new Command()
       return;
     }
 
-    handler.tagFilesWithDebugInfo();
+    await handler.tagFilesWithDebugInfo();
 
     handler.uploadSourcemaps();
 
