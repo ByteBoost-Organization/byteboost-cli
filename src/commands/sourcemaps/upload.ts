@@ -20,6 +20,7 @@ export const UploadSourcemapsCommand = new Command()
   )
   .option('--packageJSONVersion', 'Use the version from package.json')
   .option('--dist <dist>', 'Name of the distribution folder')
+  .option('--cleanupSourceMaps <boolean>', 'Remove sourcemaps after uploading')
   .argument('<path>', 'Path to your project directory')
   .action(async (path: string, options) => {
     if (!options.version && !options.packageJSONVersion) {
@@ -68,7 +69,11 @@ export const UploadSourcemapsCommand = new Command()
 
     await handler.tagFilesWithDebugInfo();
 
-    handler.uploadSourcemaps();
+    await handler.uploadSourcemaps();
+
+    if (options.cleanupSourceMaps) {
+      handler.cleanupSourceMaps();
+    }
 
     console.log(
       `Uploaded sourcemaps in ${(Date.now() - startTime) / 1000} seconds`,
