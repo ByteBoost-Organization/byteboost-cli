@@ -16,5 +16,3 @@ program.showSuggestionAfterError();
 program.showHelpAfterError();
 
 program.parse();
-
-export { UploadSourceMapsHandler } from './commands/sourcemaps/index.js';
