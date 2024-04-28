@@ -187,8 +187,6 @@ export class UploadSourceMapsHandler {
     for (const path of this.mapFilePaths) {
       unlinkSync(path);
     }
-
-    console.log('Sourcemaps cleaned up');
   }
 
   public async uploadSourcemaps() {
