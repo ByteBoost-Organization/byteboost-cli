@@ -75,8 +75,6 @@ export const UploadSourcemapsCommand = new Command()
 
     await handler.uploadSourcemaps();
 
-    console.log('options.cleanupSourceMaps', options.cleanupSourceMaps);
-
     if (options.cleanupSourceMaps === 'true') {
       handler.cleanupSourceMaps();
     }
