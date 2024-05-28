@@ -51,7 +51,7 @@ export class UploadSourceMapsHandler {
         return false;
       }
     } catch (err) {
-      console.log(`Couldn't find the directory ${this.path}`);
+      console.log(`[Byteboost] Couldn't find the directory ${this.path}`);
 
       return false;
     }
@@ -130,7 +130,7 @@ export class UploadSourceMapsHandler {
           !Config.BB_DEBUG
         ) {
           throw new Error(
-            `File ${filePath} already contains a debug id. We only support one debug id per file. Please regenerate the sourcemaps.`,
+            `[Byteboost] File ${filePath} already contains a debug id. We only support one debug id per file. Please regenerate the sourcemaps.`,
           );
         }
 
@@ -191,15 +191,15 @@ export class UploadSourceMapsHandler {
 
   public async uploadSourcemaps() {
     if (this.mapFilePaths.length === 0) {
-      console.log('No sourcemaps found');
+      console.log('[Byteboost] No sourcemaps found');
       return;
     }
 
     const res = await this.uploadFiles(this.mapFilePaths);
 
     if (res.status !== 201) {
-      console.log('Failed to upload sourcemaps');
-      console.log(JSON.stringify(await res.json(), null, 2));
+      console.log('[Byteboost] Failed to upload sourcemaps');
+      console.log(`[Byteboost] ${JSON.stringify(await res.json(), null, 2)}`);
       return;
     }
 
@@ -233,7 +233,9 @@ export class UploadSourceMapsHandler {
 
       return true;
     } catch (err) {
-      console.log(`Couldn't find the .env file in path ${this.path}`);
+      console.log(
+        `[Byteboost] Couldn't find the .env file in your project root path ${this.path}`,
+      );
       console.log(`
       Env format:
       BYTEBOOST_TOKEN=<your-token>
