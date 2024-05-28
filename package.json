@@ -1,33 +1,55 @@
 {
   "name": "@byteboost/cli",
-  "version": "0.0.1",
+  "version": "0.0.1-prerelease.12",
   "description": "Byteboost CLI",
-  "main": "dist/index.js",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./sdk": "./dist/managers/index.js"
+  },
+  "private": false,
+  "engines": {
+    "node": ">=16"
+  },
+  "repository": {
+    "url": "https://github.com/ByteBoost-Organization/byteboost-cli",
+    "type": "github"
+  },
+  "homepage": "https://docs.byteboost.io/cli",
   "bin": {
     "byteboost-cli": "./dist/index.js"
   },
-  "type": "module",
   "scripts": {
     "clean": "del ./dist",
     "build": "npx tsc",
     "test": "npm run build && npm i -g",
-    "patch": "npm run build && npm version patch && npm publish && git push",
-    "minor": "npm run build && npm version minor && npm publish && git push",
-    "major": "npm run build && npm version major && npm publish && git push"
+    "copy-prod-conf": "cp ./prod.config.js ./dist/config.js",
+    "patch": "npm run clean && npm run build && npm run copy-prod-conf && npm version patch && npm publish && git push",
+    "minor": "npm run clean && npm run build && npm run copy-prod-conf && npm version minor && npm publish && git push",
+    "major": "npm run clean && npm run build && npm run copy-prod-conf && npm version major && npm publish && git push",
+    "prerelease": "npm run clean && npm run build && npm version prerelease --preid=prerelease && npm publish && git push"
   },
   "author": "",
   "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.4.4",
+    "@types/inquirer": "^9.0.3",
+    "@types/cli-progress": "^3.11.5",
+    "@types/uuid": "^9.0.8",
+    "typescript": "^5.1.6"
+  },
   "dependencies": {
     "@commander-js/extra-typings": "^12.0.1",
+    "cli-progress": "^3.12.0",
     "commander": "^12.0.0",
-    "inquirer": "^9.2.16",
-    "mime": "^4.0.1"
-  },
-  "devDependencies": {
-    "@types/inquirer": "^9.0.3",
-    "@types/node": "^20.4.4",
     "del-cli": "^5.1.0",
+    "dotenv": "^16.4.5",
+    "inquirer": "^9.2.16",
+    "mime": "^4.0.1",
+    "node-fetch": "^3.3.2",
     "prettier": "^3.2.5",
-    "typescript": "^5.1.6"
+    "uuid": "^9.0.1",
+    "form-data": "^4.0.0",
+    "nanoid": "^5.0.7"
   }
 }

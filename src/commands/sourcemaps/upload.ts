@@ -1,115 +1,90 @@
 import { Command } from '@commander-js/extra-typings';
-import { lstatSync, readdirSync, readFileSync } from 'fs';
-import mime from 'mime';
+
+import { readFileSync } from 'fs';
+import { Config } from '../../config.js';
+import { UploadSourceMapsHandler } from '../../managers/sourcemaps/upload.js';
+
 // ~/projekt/byteboost/byteboost-application/client
 
-enum FileType {
-  ApplicationJson = 'application/json',
-  TextJavascript = 'text/javascript',
-}
-
-class UploadSoucemapsHandler {
-  private rootFoldersAndFiles = [];
-
-  public jsFilePaths: string[] = [];
-  public mapFilePaths: string[] = [];
-
-  constructor(public path: string) {}
-
-  public isPathValidJsDirectory() {
-    try {
-      const directory = readdirSync(this.path);
-
-      if (!directory.includes('package.json')) {
-        console.log(
-          `The directory ${this.path} is not a valid project directory`,
-        );
-
-        return false;
-      }
-    } catch (err) {
-      console.log(`Couldn't find the directory ${this.path}`);
-
-      return false;
-    }
-
-    return true;
-  }
-
-  public checkPathForSourcemaps(path: string) {
-    const items = readdirSync(path);
-
-    for (const item of items) {
-      if (item === 'node_modules') {
-        continue;
-      }
-
-      const mimetype = mime.getType(`${path}/${item}`);
-
-      if (mimetype === FileType.ApplicationJson && item.includes('.js.map')) {
-        this.mapFilePaths.push(`${path}/${item}`);
-
-        continue;
-      }
-
-      if (mimetype === FileType.TextJavascript) {
-        const fileContent = readFileSync(`${path}/${item}`, 'utf-8');
-
-        if (fileContent.includes('//# sourceMappingURL')) {
-          this.jsFilePaths.push(`${path}/${item}`);
-        }
-
-        continue;
-      }
-
-      const stats = lstatSync(`${path}/${item}`);
-
-      if (stats.isDirectory()) {
-        this.checkPathForSourcemaps(`${path}/${item}`);
-
-        continue;
-      }
-    }
-  }
+if (Config.BB_DEBUG) {
+  // Disables SSL certificate validation
+  process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 }
 
 export const UploadSourcemapsCommand = new Command()
   .name('upload')
   .description('Upload sourcemaps to Byteboost')
   .option(
-    '-v, --version',
-    "Label the source maps with the project's version number",
+    '--projectVersion <projectVersion>',
+    "Label the source maps with the project's version",
   )
-  .option('--dist <dist>', 'Name of the distribution folder')
-  .argument('<path>', 'Path to your project directory')
-  .action((path: string, options) => {
-    const handler = new UploadSoucemapsHandler(path);
+  .option('--packageJSONVersion', 'Use the version from package.json')
+  .option('--dist <dist>', 'Name of the distribution folder, eg build or dist')
+  .option(
+    '--cleanupSourceMaps <boolean>',
+    'Remove sourcemaps after uploading. This is helpful if you are running for example nextjs and dont want your sourcemaps to be public.',
+  )
+  .argument('<path>', 'Path to your project root directory')
+  .action(async (path: string, options) => {
+    if (options.cleanupSourceMaps === undefined) {
+      options.cleanupSourceMaps = 'true';
+    }
 
-    // if (!handler.isPathValidJsDirectory()) {
-    //   return;
-    // }
+    if (!options.projectVersion && !options.packageJSONVersion) {
+      console.log(
+        `[Byteboost] You must provide a version with --projectVersion or use --packageJSONVersion to use the version from package.json`,
+      );
 
-    handler.checkPathForSourcemaps(path);
+      return;
+    }
 
-    console.log('Js files', handler.jsFilePaths.length);
+    const startTime = Date.now();
+    const handler = new UploadSourceMapsHandler(path, options.dist);
 
-    console.log('Sourcemaps', handler.mapFilePaths.length);
+    const isValidJsDir = handler.isPathValidJsDirectory();
 
-    // try {
-    //   const directory = readdirSync(path);
+    if (!isValidJsDir) {
+      console.warn(
+        `[Byteboost] The path ${path} is not a valid JS project directory. Couldn't find package.json`,
+      );
+      return;
+    }
 
-    //   if (!directory.includes('package.json')) {
-    //     console.log('This is not a valid project directory');
+    if (options.projectVersion) {
+      handler.version = options.projectVersion;
+    } else {
+      const packageJSON = JSON.parse(
+        readFileSync(`${path}/package.json`, 'utf-8'),
+      );
 
-    //     return;
-    //   }
-    // } catch (err) {
-    //   console.log(`Couldn't find the directory ${path}`);
+      handler.version = packageJSON.version;
+    }
 
-    //   return;
-    // }
+    const success = handler.loadEnvironmentVariables();
 
-    // const content = JSON.parse(readFileSync(`${path}/package.json`, 'utf-8'));
+    if (success !== true) {
+      if (success !== false) console.log(`[Byteboost] ${success}`);
+      return;
+    }
 
-    // const directories: string[] = []
+    handler.compileSourceMapPathsList();
+
+    if (!handler.mapFilePaths[0]) {
+      console.log(`[Byteboost] No sourcemaps found in ${handler.fullpath}`);
+      return;
+    }
+
+    await handler.tagFilesWithDebugInfo();
+
+    await handler.uploadSourcemaps();
+
+    if (options.cleanupSourceMaps === 'true') {
+      handler.cleanupSourceMaps();
+
+      console.log('[Byteboost] Sourcemaps cleaned up');
+    }
+
+    console.log(
+      `[Byteboost] Uploaded sourcemaps in ${(Date.now() - startTime) / 1000} seconds`,
+    );
   });
