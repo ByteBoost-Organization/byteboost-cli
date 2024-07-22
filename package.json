@@ -1,6 +1,6 @@
 {
   "name": "@byteboost/cli",
-  "version": "1.0.1-dev.5",
+  "version": "1.0.1-dev.6",
   "description": "Byteboost CLI",
   "type": "module",
   "module": "./dist/managers/index.js",
