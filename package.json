@@ -1,11 +1,11 @@
 {
   "name": "@byteboost/cli",
-  "version": "1.0.1-dev.0",
+  "version": "1.0.0",
   "description": "Byteboost CLI",
   "type": "module",
   "exports": {
-    "require": "./dist/managers/index.cjs",
-    "import": "./dist/managers/index.js"
+    ".": "./dist/index.js",
+    "./sdk": "./dist/managers/index.js"
   },
   "private": false,
   "engines": {
@@ -21,21 +21,27 @@
   },
   "scripts": {
     "clean": "del ./dist",
-    "build": "npx tsc",
+    "build": "npm run clean && npx tsc && npm run rollup",
     "test": "npm run build && npm i -g",
     "copy-prod-conf": "cp ./prod.config.js ./dist/config.js",
     "patch": "npm run clean && npm run build && npm run copy-prod-conf && npm version patch && npm publish && git push",
     "minor": "npm run clean && npm run build && npm run copy-prod-conf && npm version minor && npm publish && git push",
     "major": "npm run clean && npm run build && npm run copy-prod-conf && npm version major && npm publish && git push",
-    "prerelease": "npm run clean && npm run build && npm version prerelease --preid=prerelease && npm publish && git push"
+    "prerelease": "npm run clean && npm run build && npm version prerelease --preid=prerelease && npm publish && git push",
+    "rollup": "rollup -c"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^20.4.4",
-    "@types/inquirer": "^9.0.3",
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/cli-progress": "^3.11.5",
+    "@types/inquirer": "^9.0.3",
+    "@types/node": "^20.4.4",
     "@types/uuid": "^9.0.8",
+    "rollup-plugin-dts": "^6.1.1",
+    "rollup-plugin-esbuild": "^6.1.1",
     "typescript": "^5.1.6"
   },
   "dependencies": {
@@ -44,12 +50,12 @@
     "commander": "^12.0.0",
     "del-cli": "^5.1.0",
     "dotenv": "^16.4.5",
+    "form-data": "^4.0.0",
     "inquirer": "^9.2.16",
     "mime": "^4.0.1",
+    "nanoid": "^5.0.7",
     "node-fetch": "^3.3.2",
     "prettier": "^3.2.5",
-    "uuid": "^9.0.1",
-    "form-data": "^4.0.0",
-    "nanoid": "^5.0.7"
+    "uuid": "^9.0.1"
   }
 }
