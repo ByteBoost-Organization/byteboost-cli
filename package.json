@@ -9,6 +9,9 @@
     "require": "./dist/managers/index.cjs",
     "import": "./dist/managers/index.js"
   },
+  "files": [
+    "dist/**/*"
+  ],
   "private": false,
   "engines": {
     "node": ">=16"

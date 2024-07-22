@@ -2,7 +2,7 @@
   "compilerOptions": {
 		"outDir": "./dist",
 		"module": "node16",
-		"moduleResolution": "node16",
+		"moduleResolution": "NodeNext",
 		"moduleDetection": "force",
 		"target": "ES2022", // Node.js 18
 		"lib": [
