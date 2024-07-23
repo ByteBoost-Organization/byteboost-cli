@@ -27,7 +27,8 @@
 		"useDefineForClassFields": true,
 		"forceConsistentCasingInFileNames": true,
 		"skipLibCheck": true,
-		"sourceMap": false
+		"sourceMap": false,
+		"declarationDir": "types"
   },
   "include": ["environment.d.ts", "src/**/*"],
   "exclude": ["templates/*", "temporary/*"]
