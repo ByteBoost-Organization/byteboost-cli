@@ -3,8 +3,8 @@
   "version": "1.0.1-dev.12",
   "description": "Byteboost CLI",
   "type": "module",
-  "module": "dist/managers/index.js",
-  "main": "dist/dist/managers/index.cjs",
+  "module": "./dist/managers/index.js",
+  "main": "./dist/dist/managers/index.cjs",
   "exports": {
     "require": "./dist/dist/managers/index.cjs",
     "import": "./dist/managers/index.js"
@@ -23,7 +23,7 @@
   },
   "homepage": "https://docs.byteboost.io/cli",
   "bin": {
-    "byteboost-cli": "./dist/index.mjs"
+    "byteboost-cli": "./dist/index.js"
   },
   "scripts": {
     "clean": "del ./dist",
