@@ -10,7 +10,6 @@
   "files": [
     "dist/**/*"
   ],
-  "types": "dist/types",
   "private": false,
   "engines": {
     "node": ">=16"

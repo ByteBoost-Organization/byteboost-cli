@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
 		"outDir": "dist/",
-    "declarationDir": "dist/types",
     "rootDir": "src",
     "module": "ESNext", // For modern ES module support
     "moduleResolution": "Node",

@@ -9,7 +9,12 @@ const packageJson = JSON.parse(readFileSync('./package.json', 'utf8'));
 
 export default [
   {
-    input: ['dist/index.js', 'dist/managers/index.js'],
+    input: [
+      'dist/index.js',
+      'dist/index.d.ts',
+      'dist/managers/index.js',
+      'dist/managers/index.d.ts',
+    ],
     output: [
       {
         // file: packageJson.main,
@@ -28,10 +33,10 @@ export default [
       // },
     ],
     plugins: [
-      resolve(),
       commonjs(),
-      typescript({ tsconfig: './tsconfig.json' }),
       json(),
+      resolve(),
+      // typescript({ tsconfig: './tsconfig.json' }),
     ],
   },
   // {
