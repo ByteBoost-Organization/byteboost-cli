@@ -129,9 +129,10 @@ export class UploadSourceMapsHandler {
           (await this.readLastLine(filePath)).includes('//# bbDebugId') &&
           !Config.BB_DEBUG
         ) {
-          throw new Error(
-            `[Byteboost] File ${filePath} already contains a debug id. We only support one debug id per file. Please regenerate the sourcemaps.`,
-          );
+          continue;
+          // throw new Error(
+          //   `[Byteboost] File ${filePath} already contains a debug id. We only support one debug id per file. Please regenerate the sourcemaps.`,
+          // );
         }
 
         if (filePath.includes('.map')) {
