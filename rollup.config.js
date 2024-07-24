@@ -9,23 +9,23 @@ const packageJson = JSON.parse(readFileSync('./package.json', 'utf8'));
 
 export default [
   {
-    input: ['src/index.ts', 'src/managers/index.ts'],
+    input: ['dist/index.js', 'dist/managers/index.js'],
     output: [
       {
         // file: packageJson.main,
-        dir: 'dist',
         format: 'cjs',
+        // sourcemap: true,
+        // inlineDynamicImports: true,
         entryFileNames: '[name].cjs',
-        // inlineDynamicImports: true,
+        preserveModules: true,
+        dir: './dist',
       },
-      {
-        // file: packageJson.module,
-        dir: 'dist',
-        entryFileNames: '[name].mjs',
-
-        format: 'esm',
-        // inlineDynamicImports: true,
-      },
+      // {
+      //   file: packageJson.module,
+      //   format: 'esm',
+      //   sourcemap: true,
+      //   inlineDynamicImports: true,
+      // },
     ],
     plugins: [
       resolve(),
@@ -35,29 +35,8 @@ export default [
     ],
   },
   // {
-  //   input: 'src/managers/index.ts',
-  //   output: [
-  //     {
-  //       file: packageJson.main,
-  //       format: 'cjs',
-  //       inlineDynamicImports: true,
-  //     },
-  //     {
-  //       file: packageJson.module,
-  //       format: 'esm',
-  //       inlineDynamicImports: true,
-  //     },
-  //   ],
-  //   plugins: [
-  //     resolve(),
-  //     commonjs(),
-  //     typescript({ tsconfig: './tsconfig.json' }),
-  //     json(),
-  //   ],
+  //   input: 'dist/types/index.d.ts',
+  //   output: [{ file: 'dist/index.d.ts', format: 'esm' }],
+  //   plugins: [dts()],
   // },
-  {
-    input: 'dist/types/index.d.ts',
-    output: [{ file: 'dist/index.d.ts', format: 'esm' }],
-    plugins: [dts()],
-  },
 ];

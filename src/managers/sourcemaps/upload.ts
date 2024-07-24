@@ -2,7 +2,7 @@ import mime from 'mime';
 import { nanoid } from 'nanoid';
 import fetch from 'node-fetch';
 import { join } from 'path';
-import readline from 'readline';
+import * as readline from 'readline';
 import { validate } from 'uuid';
 import {
   appendFileSync,
@@ -13,8 +13,8 @@ import {
   unlinkSync,
   writeFileSync,
 } from 'fs';
-import dotenv, { DotenvParseOutput } from 'dotenv';
-import FormData from 'form-data';
+import * as dotenv from 'dotenv';
+import * as FormData from 'form-data';
 import { Config } from '../../config.js';
 
 enum FileType {
@@ -22,7 +22,7 @@ enum FileType {
   TextJavascript = 'text/javascript',
 }
 
-interface EnvConf extends DotenvParseOutput {
+interface EnvConf extends dotenv.DotenvParseOutput {
   BYTEBOOST_TOKEN: string;
   BYTEBOOST_DOMAIN: string;
   BYTEBOOST_ORGANIZATION: string;

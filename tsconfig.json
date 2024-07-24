@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
 		"outDir": "dist/",
-		"declarationDir": "dist/types",
-		"rootDir": "src",
-		"module": "node16",
-		"moduleResolution": "NodeNext",
-		"moduleDetection": "force",
-		"target": "ES2022", // Node.js 18
+    "declarationDir": "dist/types",
+    "rootDir": "src",
+    "module": "ESNext", // For modern ES module support
+    "moduleResolution": "Node",
+    "target": "ES2022",
 		"lib": [
 			"DOM",
 			"DOM.Iterable",
@@ -29,7 +28,8 @@
 		"useDefineForClassFields": true,
 		"forceConsistentCasingInFileNames": true,
 		"skipLibCheck": true,
-		"sourceMap": false
+		"sourceMap": false,
+		
 	},
   "include": ["environment.d.ts", "src/**/*"],
   "exclude": ["templates/*", "temporary/*"]
