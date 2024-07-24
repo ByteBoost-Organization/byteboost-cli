@@ -1,11 +1,11 @@
 {
   "name": "@byteboost/cli",
-  "version": "1.0.1-dev.9",
+  "version": "1.0.1-dev.10",
   "description": "Byteboost CLI",
   "type": "module",
   "module": "dist/index.cjs",
   "main": "dist/index.mjs",
-  "exports": {    
+  "exports": {
     "require": "./dist/index.cjs",
     "import": "./dist/index.mjs"
   },
