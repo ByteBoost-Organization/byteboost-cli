@@ -2,7 +2,7 @@ import mime from 'mime';
 import { nanoid } from 'nanoid';
 import fetch from 'node-fetch';
 import { join } from 'path';
-import * as readline from 'readline';
+import readline from 'readline';
 import { validate } from 'uuid';
 import {
   appendFileSync,
@@ -13,8 +13,8 @@ import {
   unlinkSync,
   writeFileSync,
 } from 'fs';
-import * as dotenv from 'dotenv';
-import * as FormData from 'form-data';
+import dotenv from 'dotenv';
+import FormData from 'form-data';
 import { Config } from '../../config.js';
 
 enum FileType {
