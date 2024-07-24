@@ -4,7 +4,7 @@ set -e
 
 branchName=$(eval "git rev-parse --abbrev-ref HEAD")
 
-npm run rollup
+npm run build
 
 npm version prerelease --preid=$branchName
 
