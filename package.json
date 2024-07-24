@@ -3,12 +3,12 @@
   "version": "1.0.1-dev.8",
   "description": "Byteboost CLI",
   "type": "module",
-  "module": "dist/esm/index.js",
-  "main": "dist/cjs/index.js",
+  "module": "dist/index.cjs",
+  "main": "dist/index.mjs",
   "exports": {
     ".": {
-      "require": "./dist/cjs/index.js",
-      "import": "./dist/esm/index.js"
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
     }
   },
   "files": [
@@ -24,7 +24,7 @@
   },
   "homepage": "https://docs.byteboost.io/cli",
   "bin": {
-    "byteboost-cli": "./dist/esm/index.js"
+    "byteboost-cli": "./dist/index.mjs"
   },
   "scripts": {
     "clean": "del ./dist",

@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-		"outDir": "./dist",
+		"outDir": "dist/",
+		"declarationDir": "dist/types",
+		"rootDir": "src",
 		"module": "node16",
 		"moduleResolution": "NodeNext",
 		"moduleDetection": "force",
@@ -27,9 +29,8 @@
 		"useDefineForClassFields": true,
 		"forceConsistentCasingInFileNames": true,
 		"skipLibCheck": true,
-		"sourceMap": false,
-		"declarationDir": "types"
-  },
+		"sourceMap": false
+	},
   "include": ["environment.d.ts", "src/**/*"],
   "exclude": ["templates/*", "temporary/*"]
 }
