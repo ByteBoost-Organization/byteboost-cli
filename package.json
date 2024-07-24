@@ -3,11 +3,11 @@
   "version": "1.0.1-dev.13",
   "description": "Byteboost CLI",
   "type": "module",
-  "module": "./dist/managers/index.js",
-  "main": "./dist/dist/managers/index.cjs",
   "exports": {
-    "require": "./dist/dist/managers/index.cjs",
-    "import": "./dist/managers/index.js"
+    ".": {
+      "require": "./dist/dist/managers/index.cjs",
+      "import": "./dist/managers/index.js"
+    }
   },
   "files": [
     "dist/**/*"
