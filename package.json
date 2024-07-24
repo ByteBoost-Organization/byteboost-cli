@@ -4,10 +4,8 @@
   "description": "Byteboost CLI",
   "type": "module",
   "exports": {
-    ".": {
-      "require": "./dist/dist/managers/index.cjs",
-      "import": "./dist/managers/index.js"
-    }
+    "require": "./dist/dist/managers/index.cjs",
+    "import": "./dist/managers/index.js"
   },
   "files": [
     "dist/**/*"
