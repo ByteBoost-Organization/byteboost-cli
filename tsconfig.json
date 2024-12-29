@@ -13,7 +13,6 @@
 			"ES2022"
 		],
 		"resolveJsonModule": false, // ESM doesn't yet support JSON modules.
-		"jsx": "react",
 		"declaration": true,
 		"newLine": "lf",
 		"stripInternal": true,
