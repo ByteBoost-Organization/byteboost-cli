@@ -10,6 +10,10 @@ npx tsc
 
 git add .
 
+git commit -am "not important"
+
+git push
+
 npm version prerelease --preid=$branchName
 
 npm publish
