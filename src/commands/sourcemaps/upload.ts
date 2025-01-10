@@ -3,8 +3,6 @@ import { readFileSync } from 'fs';
 import { Config } from '../../config.js';
 import { UploadSourceMapsHandler } from '../../managers/sourcemaps/upload.js';
 
-// ~/projekt/byteboost/byteboost-application/client
-
 if (Config.BB_DEBUG) {
   // Disables SSL certificate validation
   process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
