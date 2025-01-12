@@ -83,9 +83,10 @@ export class UploadSourceMapsHandler {
 
         return data.data;
       } catch (err) {
-        throw new Error(
-          'Unexpected error. please contact us at support@byteboost.io',
-        );
+        // throw new Error(
+        //   'Unexpected error. please contact us at support@byteboost.io',
+        // );
+        throw err;
       }
     } catch (err) {
       throw err;
