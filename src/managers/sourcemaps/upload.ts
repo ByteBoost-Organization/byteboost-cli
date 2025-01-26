@@ -377,9 +377,10 @@ export class UploadSourceMapsHandler {
       );
       console.log(`
       Env format:
-      BYTEBOOST_TOKEN=<your-token>
-      BYTEBOOST_DOMAIN=<your-domain>
+      BYTEBOOST_PRIVATE_KEY=<your-private-key>
+      BYTEBOOST_PUBLIC_KEY=<your-public-key>
       BYTEBOOST_ORGANIZATION=<your-organization>
+      BYTEBOOST_DOMAIN=<your-domain>
     `);
       return false;
     }
