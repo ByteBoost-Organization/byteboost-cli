@@ -83,9 +83,6 @@ export class UploadSourceMapsHandler {
 
         return data.data;
       } catch (err) {
-        // throw new Error(
-        //   'Unexpected error. please contact us at support@byteboost.io',
-        // );
         throw err;
       }
     } catch (err) {
@@ -238,9 +235,6 @@ export class UploadSourceMapsHandler {
             !Config.BB_DEBUG
           ) {
             continue;
-            // throw new Error(
-            //   `[Byteboost] File ${filePath} already contains a debug id. We only support one debug id per file. Please regenerate the sourcemaps.`,
-            // );
           }
         } catch (err) {
           continue;
