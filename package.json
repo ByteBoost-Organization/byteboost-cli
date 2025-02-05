@@ -4,8 +4,8 @@
   "description": "Byteboost CLI",
   "type": "module",
   "exports": {
-    "require": "./dist/dist/managers/index.cjs",
-    "import": "./dist/managers/index.js"
+    "require": "./dist/dist/index.cjs",
+    "import": "./dist/index.js"
   },
   "files": [
     "dist/**/*"
@@ -32,8 +32,7 @@
     "minor": "npm run clean && npm run build && npm version minor && npm publish && git push",
     "major": "npm run clean && npm run build && npm version major && npm publish && git push",
     "prerelease": "npm run clean && npm run build && npm version prerelease --preid=prerelease && npm publish && git push",
-    "rollup": "rollup -c ./rollup.config.js",
-    "tsup": "tsup src/managers/index.ts --format cjs,esm --dts"
+    "rollup": "rollup -c ./rollup.config.js"
   },
   "author": "",
   "license": "ISC",
