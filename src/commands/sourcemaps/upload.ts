@@ -44,7 +44,8 @@ export const UploadSourcemapsCommand = new Command()
     const success = handler.loadEnvironmentVariables();
     if (success !== true) {
       if (success !== false) console.log(`[Byteboost] ${success}`);
-      return;
+
+      throw new Error('Failed to load environment variables');
     }
 
     try {
