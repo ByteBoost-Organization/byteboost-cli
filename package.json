@@ -3,9 +3,19 @@
   "version": "1.1.0",
   "description": "Byteboost CLI",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    "require": "./dist/dist/index.cjs",
-    "import": "./dist/index.js"
+    ".": {
+      "require": {
+        "default": "./dist/cjs/index.js",
+        "types": "./dist/cjs/index.d.ts"
+      },
+      "import": {
+        "default": "./dist/esm/index.js",
+        "types": "./dist/esm/index.d.ts"
+      }
+    }
   },
   "files": [
     "dist/**/*"
@@ -20,32 +30,28 @@
   },
   "homepage": "https://docs.byteboost.io/cli",
   "bin": {
-    "byteboost-cli": "./dist/index.js"
+    "byteboost-cli": "./dist/esm/index.js"
   },
   "scripts": {
     "clean": "del ./dist",
-    "build": "npm run clean && npm run copy-prod-conf && npx tsc && npm run rollup",
+    "build": "npm run clean && npm run copy-prod-conf && node ./build.js",
     "test": "npm run copy-dev-conf && npm run clean && npx tsc && npm i -g",
     "copy-prod-conf": "cp ./prod.config.ts ./src/config.ts",
     "copy-dev-conf": "cp ./dev.config.ts ./src/config.ts",
     "patch": "npm run clean && npm run build && npm version patch && npm publish && git push",
     "minor": "npm run clean && npm run build && npm version minor && npm publish && git push",
     "major": "npm run clean && npm run build && npm version major && npm publish && git push",
-    "prerelease": "npm run clean && npm run build && npm version prerelease --preid=prerelease && npm publish && git push",
-    "rollup": "rollup -c ./rollup.config.js"
+    "prerelease": "npm run clean && npm run build && npm version prerelease --preid=prerelease && npm publish && git push"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^26.0.1",
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/cli-progress": "^3.11.5",
     "@types/inquirer": "^9.0.3",
     "@types/node": "^20.4.4",
     "@types/uuid": "^9.0.8",
-    "rollup": "^4.19.0",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "zx": "^8.3.2"
   },
   "dependencies": {
     "@commander-js/extra-typings": "^12.0.1",

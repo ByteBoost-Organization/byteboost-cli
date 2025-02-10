@@ -1,36 +1,21 @@
-{
-  "compilerOptions": {
-		"outDir": "dist/",
-    "rootDir": "src",
-    // "module": "ES6", // For modern ES module support
-    "moduleResolution": "Node16",
-		"module": "node16",
-		"moduleDetection": "force",
-    "target": "ES2016",
-		"lib": [
-			"DOM",
-			"DOM.Iterable",
-			"ES2022"
-		],
-		"resolveJsonModule": false, // ESM doesn't yet support JSON modules.
-		"declaration": true,
-		"newLine": "lf",
-		"stripInternal": true,
-		"strict": true,
-		"noImplicitReturns": true,
-		"noImplicitOverride": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noFallthroughCasesInSwitch": true,
-		"noUncheckedIndexedAccess": true,
-		"noPropertyAccessFromIndexSignature": true,
-		"noEmitOnError": true,
-		"useDefineForClassFields": true,
-		"forceConsistentCasingInFileNames": true,
-		"skipLibCheck": true,
-		"sourceMap": false,
-		
-	},
-  "include": ["environment.d.ts", "src/**/*"],
-  "exclude": ["templates/*", "temporary/*"]
+{ 
+    "compilerOptions": { 
+        "incremental": true, 
+        "noImplicitAny": true, 
+        "allowJs": true, 
+        "target": "esnext", 
+        "lib": ["esnext","dom"], 
+        "module": "nodenext", 
+        "alwaysStrict": true, 
+        "skipLibCheck": true, 
+        "noUnusedParameters": false, 
+        "noUnusedLocals": false, 
+        "strictNullChecks": true, 
+        "noUncheckedIndexedAccess": true, 
+        "esModuleInterop": true, 
+        "allowSyntheticDefaultImports": true, 
+        "forceConsistentCasingInFileNames": true, 
+        "typeRoots": ["./node_modules/@types", "./@types"], 
+    }, 
+    "include": ["src/**/*", "test/**/*.ts"] 
 }
