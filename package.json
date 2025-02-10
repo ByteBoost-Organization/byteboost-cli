@@ -35,7 +35,7 @@
   "scripts": {
     "clean": "del ./dist",
     "build": "npm run clean && npm run copy-prod-conf && node ./build.js",
-    "test": "npm run copy-dev-conf && npm run clean && npx tsc && npm i -g",
+    "test": "npm run copy-dev-conf && npm run clean && node ./build.js && npm i -g",
     "copy-prod-conf": "cp ./prod.config.ts ./src/config.ts",
     "copy-dev-conf": "cp ./dev.config.ts ./src/config.ts",
     "patch": "npm run clean && npm run build && npm version patch && npm publish && git push",
